@@ -1,0 +1,17 @@
+{
+  "name": "map-template",
+  "version": "0.0.1",
+  "description": "Map Template",
+  "main": "index.php",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-css-url-adjuster": "^0.2.3",
+    "gulp-csso": "^2.0.0"
+  },
+  "author": "Vadim Kulik",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp-print": "^2.0.1"
+  }
+}

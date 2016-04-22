@@ -1,0 +1,12 @@
+{
+    "name": "SimpleTest",
+    "description": "Test composer features",
+    "license": "MIT",
+    "require": {
+        "mgargano/simplehtmldom": "^1.5"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "^1.5",
+        "jdorn/file-system-cache": "dev-master"
+    }
+}

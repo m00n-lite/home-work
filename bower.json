@@ -1,0 +1,26 @@
+{
+  "name": "map-template",
+  "description": "map template",
+  "main": "index.php",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "authors": [
+    "Vadim Kulik <xbyte.com.ua@gmail.com>"
+  ],
+  "dependencies": {
+    "jquery.maskedinput": "https://github.com/digitalBush/jquery.maskedinput.git#^1.4.1",
+    "leaflet-draw": "^0.3.0",
+    "leaflet-easyPrint": "https://github.com/rowanwins/leaflet-easyPrint.git#gh-pages",
+    "leaflet-plugins": "https://github.com/shramov/leaflet-plugins.git#^1.6.0",
+    "leaflet-sidebar": "^0.1.9",
+    "leaflet": "^0.7.7",
+    "bootstrap": "^3.3.6"
+  }
+}

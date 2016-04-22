@@ -1,0 +1,26 @@
+AddDefaultCharset utf-8
+    Options +FollowSymLinks 
+    IndexIgnore */* 
+    RewriteEngine on
+    # if a directory or a file exists, use it directly 
+	#RedirectMatch /*/cgi-bin/*$ http://google.com
+	#RedirectMatch /*/*admin*/*$ http://google.com
+	#RedirectMatch /*/admin.php|conf.php|main.php|testproxy.php*$ http://google.com
+	#RedirectMatch /*/*wp-*/*$ http://google.com
+	# Redirect all IP address to google
+	#RewriteCond %{HTTP_HOST} ^85\.214\.137\.17
+	#RewriteRule (.*) http://google.com/$1 [R=301,L]
+	#testing regexp with hackers
+	#SetEnvIfNoCase User-Agent "^*baidu*" bad_user
+	#SetEnvIfNoCase User-Agent "^*python*" bad_user
+	#SetEnvIfNoCase User-Agent "^*curl*" bad_user
+	#SetEnvIfNoCase User-Agent "^*x00_-gawa.sa.pilipinas.2015*" bad_user
+	#SetEnvIfNoCase User-Agent "^*google*" bad_user
+	#SetEnvIfNoCase User-Agent "^Morfeus Fucking Scanner" bad_user
+	#SetEnvIfNoCase User-Agent "^masscan*" bad_user
+	#SetEnvIfNoCase User-Agent "^*zgrab*" bad_user
+	Deny from env=bad_user
+    RewriteCond %{REQUEST_FILENAME} !-f 
+    RewriteCond %{REQUEST_FILENAME} !-d
+    # otherwise forward it to index.php 
+    RewriteRule . index.php
