@@ -12,6 +12,7 @@
   "author": "Vadim Kulik",
   "license": "MIT",
   "devDependencies": {
-    "gulp-print": "^2.0.1"
+    "gulp-print": "^2.0.1",
+    "gulp-util": "^3.0.7"
   }
 }

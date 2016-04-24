@@ -3,14 +3,16 @@ var concat = require('gulp-concat');
 var csso = require('gulp-csso');
 var urlAdjuster = require('gulp-css-url-adjuster');
 var print = require('gulp-print');
+var util = require('gulp-util');
 
+var projectList = []; //list of tasks,system variable, don't use it. Instead use getAllprojects()  
+var errors = []; //list of errors
 var 
-	dest = 'web/assets',//detenation folder
+	dest  = 'web/assets',//detenation folder
 	bower = 'bower_components',//bower folder
-	src = 'src'; //local css,js,img
-var progect = {
-	test : [
-	],
+	src   = 'src'; //local css,js,img
+
+var projects = {
 	images : [
 	    bower+'/leaflet/dist/images/*',
 		bower+'/leaflet-draw/dist/images/*',
@@ -42,70 +44,56 @@ var progect = {
 		bower+'/bootstrap/dist/fonts/*'
 	]
 }
-
 gulp.task('fonts', function() {
-	gulp.src(progect.fonts)
-  		.pipe(print(function(filepath) {
-      		return "built: " + filepath + " processed";
-    	}))
+	gulp.src(projects.fonts)
+		.pipe(!util.env.production ? printFileList() : util.noop())
     	.pipe(gulp.dest(dest+'/fonts'));
   	});
 gulp.task('images', function() {
-	gulp.src(progect.images)
-  		.pipe(print(function(filepath) {
-      		return "built: " + filepath + " processed";
-    	}))
+	gulp.src(projects.images)
+		.pipe(!util.env.production ? printFileList() : util.noop())
     	.pipe(gulp.dest(dest+'/img'));
+    	
 });
 gulp.task('mainjs', function() {
-  	gulp.src(progect.mainjs)
-  		.pipe(print(function(filepath) {
-      		return "built: " + filepath + " processed";
-    	}))
+  	gulp.src(projects.mainjs)
+  		.pipe(!util.env.production ? printFileList() : util.noop())
   		.pipe(concat('main.js'))
   		.pipe(gulp.dest(dest+'/js'));
-  		
 });
 gulp.task('maincss', function() {
-  	gulp.src(progect.maincss)
-  		.pipe(print(function(filepath) {
-      		return "built: " + filepath + " processed";
-    	}))
+  	gulp.src(projects.maincss)
+  		.pipe(!util.env.production ? printFileList() : util.noop())
   		.pipe(urlAdjuster({replace:  ['../images','../img']}))
   		.pipe(csso())
   		.pipe(concat('main.css'))
-  		.pipe(gulp.dest(dest+'/css'));
+  		.pipe(gulp.dest(dest+'/css'));		
 });
 gulp.task('mapcss', function() {
-	gulp.src(progect.mapcss)
-		.pipe(print(function(filepath) {
-      		return "built: " + filepath + " processed";
-    	}))
+	gulp.src(projects.mapcss)
+		.pipe(!util.env.production ? printFileList() : util.noop())
     	.pipe(urlAdjuster({replace:  ['images','../img']}))
   		.pipe(csso())
   		.pipe(concat('map.css'))
   		.pipe(gulp.dest(dest+'/css'));
 });
 gulp.task('mapjs', function() {
-	gulp.src(progect.mapjs)
-		.pipe(print(function(filepath) {
-      		return "built: " + filepath + " processed";
-    	}))
+	gulp.src(projects.mapjs)
+		.pipe(!util.env.production ? printFileList() : util.noop())
   		.pipe(concat('map.js'))
   		.pipe(gulp.dest(dest+'/js'));
 });
 gulp.task('watch',function(){
-	for (i in progect){
-		if(gulp.tasks[i]){
-			gulp.watch(progect[i], [i]);
-			console.log('Task '+i+' watch started');
-		}
-		else{
-			console.log('Task "'+i+ '" Not found! Please create task with name "'+i+'" for progect "'+i+'"'); 
-		}
+	for(i in projects){
+		var watcher= gulp.watch(projects[i],[i]);
+		watcher.on('change',function(event) {
+			console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+		});
+		console.log("Task "+i+" added to watch");
 	}
 });
-gulp.task('default', getAllTasks());
+
+gulp.task('default', getAllprojects(), printErrors(), onEnd());
 /*
 Other ways to start tasks
 1)
@@ -116,20 +104,37 @@ gulp.task('default', function() {
 
 });
 2)
-gulp.task('default', []
+gulp.task('default', [task1,task2...]
 */
 
 /*
-	function returns a list of all tasks except the active
-	just for fun but can be useful
+	function returns a list of all projects for which created the tasks 
+	and log the projects for witch tasks in not created
 	using example gulp.task('default', getAllTasks());
-	will run all tasks exept default wich is active to avoid loop))
 */
-
-function getAllTasks(){
-	var tasks = [];
-	for(i in gulp.tasks){
-		if(!gulp.tasks[i].running) tasks.push(i);		
+function getAllprojects(){
+	if(projectList.length) return projectList;//Simple result caching
+	for(i in projects){
+		if(gulp.tasks[i]) projectList.push(i);		
+		else {
+			errors.push('Task "'+i+ '" Not found! Please create task with name "'+i+'" for project "'+i+'"');
+		}
 	}
-	return tasks;
+	return projectList;
+}
+function printErrors(){
+	if(!errors.length)return;
+	console.log('Errors:');
+	for(i in errors){
+		console.log(errors[i]);
+	}
+}
+function printFileList(){
+	return print(function(filepath) {
+      		return "built: " + filepath + " processed";
+    	})
+}
+function onEnd(){
+	if(util.env.production)return;
+	gulp.start('watch');
 }
